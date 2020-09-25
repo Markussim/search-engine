@@ -11,7 +11,8 @@ const db = mongoose.connection;
 
 const searchResultShema = new mongoose.Schema({
     link: String,
-    description: String
+    description: String,
+    approved: Boolean
 })
 
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -30,26 +31,41 @@ const searchResult = mongoose.model('searchResult', searchResultShema)
 app.get('/', (req, res) => res.sendFile(clientdir + "/index.html"))
 app.post('/', function (req, res) {
     console.log(req.body.link + "\n" + req.body.description)
-    res.send("<meta http-equiv=\"Refresh\" content=\"0; url='/'\" />")
+    //res.send("<meta http-equiv=\"Refresh\" content=\"0; url='/'\" />")
 
-    const link = new searchResult({ link: req.body.link, description: req.body.description })
+    db.collection("searchresults").find({ "link": req.body.link }).limit(1).toArray(function (err: any, result: any) {
+        if (err) throw err;
+        if (result.length < 1) {
+            const link = new searchResult({ link: req.body.link, description: req.body.description, approved: false })
 
+            link.save(function (err: Error, searchResult: any) {
+                if (err) return console.error(err);
+            });
+            res.send("Added link")
+        } else {
+            res.send("Link already exists")
+        }
 
-    link.save(function (err: Error, searchResult: any) {
-        if (err) return console.error(err);
     });
+
+
 })
 
 app.get('/results', (req, res) => {
     var url_parts = url.parse(req.url, true);
     var urlquery = url_parts.query;
 
-    var query = { link: urlquery.search };
-    db.collection("searchresults").find(query, { fields: { _id: 0, link: 1, description: 1 } }).limit(5).toArray(function (err: any, result: any) {
+    let query = urlquery.search ? urlquery.search : ""
+
+    const regex = new RegExp(escapeRegex(query), 'gi');
+    db.collection("searchresults").find({ $or: [{ "description": regex }, { "link": regex }] }, { fields: { _id: 0, link: 1, description: 1 } }).limit(5).toArray(function (err: any, result: any) {
         if (err) throw err;
         res.send(result)
     });
 })
 
+function escapeRegex(text: String) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
