@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 import express from 'express';
+var url = require('url');
 const app = express()
 const port = 3000
 const clientdir = __dirname.substr(0, __dirname.length - 4) + "/client"
@@ -40,7 +41,11 @@ app.post('/', function (req, res) {
 })
 
 app.get('/results', (req, res) => {
-    db.collection("searchresults").find({},{fields:{_id:0, link:1, description:1}}).limit(5).toArray(function (err: any, result: any) {
+    var url_parts = url.parse(req.url, true);
+    var urlquery = url_parts.query;
+
+    var query = { link: urlquery.search };
+    db.collection("searchresults").find(query, { fields: { _id: 0, link: 1, description: 1 } }).limit(5).toArray(function (err: any, result: any) {
         if (err) throw err;
         res.send(result)
     });
