@@ -29,7 +29,7 @@ const searchResult = mongoose.model('searchResult', searchResultShema)
 app.get('/', (req, res) => res.sendFile(clientdir + "/index.html"))
 app.post('/', function (req, res) {
     console.log(req.body.link + "\n" + req.body.description)
-    //res.send("<meta http-equiv=\"Refresh\" content=\"0; url='/'\" />")
+    res.send("<meta http-equiv=\"Refresh\" content=\"0; url='/'\" />")
 
     const link = new searchResult({ link: req.body.link, description: req.body.description })
 
@@ -37,12 +37,14 @@ app.post('/', function (req, res) {
     link.save(function (err: Error, searchResult: any) {
         if (err) return console.error(err);
     });
+})
 
-    db.collection("searchresults").find({}).toArray(function (err: any, result: any) {
+app.get('/results', (req, res) => {
+    db.collection("searchresults").find({},{fields:{_id:0, link:1, description:1}}).limit(5).toArray(function (err: any, result: any) {
         if (err) throw err;
         res.send(result)
-        db.close();
     });
 })
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
