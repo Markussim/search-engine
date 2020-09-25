@@ -24,20 +24,25 @@ app.use(express.urlencoded({
     parameterLimit: 50000
 }))
 
+const searchResult = mongoose.model('searchResult', searchResultShema)
+
 app.get('/', (req, res) => res.sendFile(clientdir + "/index.html"))
 app.post('/', function (req, res) {
-    console.log(req.body.name + "\n" + req.body.email)
-    res.send("<meta http-equiv=\"Refresh\" content=\"0; url='/'\" />")
+    console.log(req.body.link + "\n" + req.body.description)
+    //res.send("<meta http-equiv=\"Refresh\" content=\"0; url='/'\" />")
 
-    //const user = new person({ name: req.body.name, email: req.body.email})
-    
+    const link = new searchResult({ link: req.body.link, description: req.body.description })
 
-    /*user.save(function (err: Error, person: any) {
+
+    link.save(function (err: Error, searchResult: any) {
         if (err) return console.error(err);
-    });*/
+    });
+
+    db.collection("searchresults").find({}).toArray(function (err: any, result: any) {
+        if (err) throw err;
+        res.send(result)
+        db.close();
+    });
 })
-
-
-const searchResult = mongoose.model('person', searchResultShema)
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
