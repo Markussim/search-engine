@@ -105,4 +105,4 @@ dist
 
 # Security string
 
-client/security/*
+client/security/security.txt
