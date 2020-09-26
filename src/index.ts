@@ -4,7 +4,7 @@ var url = require('url');
 const fs = require('fs')
 const app = express()
 const port = 3000
-const clientdir = __dirname.substr(0, __dirname.length - 4) + "/client"
+const clientdir = __dirname.substr(0, __dirname.length - 4) + "client"
 
 mongoose.connect('mongodb://localhost/search', { useNewUrlParser: true });
 
