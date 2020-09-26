@@ -11,6 +11,7 @@ const db = mongoose.connection;
 
 const searchResultShema = new mongoose.Schema({
     link: String,
+    siteName: String,
     description: String,
     approved: Boolean
 })
@@ -30,13 +31,10 @@ const searchResult = mongoose.model('searchResult', searchResultShema)
 
 app.get('/', (req, res) => res.sendFile(clientdir + "/index.html"))
 app.post('/', function (req, res) {
-    console.log(req.body.link + "\n" + req.body.description)
-    //res.send("<meta http-equiv=\"Refresh\" content=\"0; url='/'\" />")
-
     db.collection("searchresults").find({ "link": req.body.link }).limit(1).toArray(function (err: any, result: any) {
         if (err) throw err;
         if (result.length < 1) {
-            const link = new searchResult({ link: req.body.link, description: req.body.description, approved: false })
+            const link = new searchResult({ link: req.body.link, siteName: req.body.siteName, description: req.body.description, approved: false })
 
             link.save(function (err: Error, searchResult: any) {
                 if (err) return console.error(err);
@@ -57,8 +55,18 @@ app.get('/results', (req, res) => {
 
     let query = urlquery.search ? urlquery.search : ""
 
+    let limit = urlquery.limit ? +urlquery.limit : +5
+
+    if(limit > 50) {
+        limit = 50
+    }
+
+    if (limit < 1) {
+        limit = 1
+    }
+
     const regex = new RegExp(escapeRegex(query), 'gi');
-    db.collection("searchresults").find({ $or: [{ "description": regex }, { "link": regex }] }, { fields: { _id: 0, link: 1, description: 1 } }).limit(5).toArray(function (err: any, result: any) {
+    db.collection("searchresults").find({ $and: [{$or: [{ "description": regex }, { "link": regex }, { "siteName": regex }]}, {"approved": true}] }, { fields: { _id: 0, link: 1, siteName:1, description: 1 } }).limit(limit).toArray(function (err: any, result: any) {
         if (err) throw err;
         res.send(result)
     });
