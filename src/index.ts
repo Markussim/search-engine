@@ -86,8 +86,12 @@ app.get('/', (req, res) => {
         limit = 1
     }
 
+    let showUnapproved = !(urlquery.showUnapproved == "true")
+
+    console.log(showUnapproved + " " + urlquery.showUnapproved)
+
     const regex = new RegExp(escapeRegex(query), 'gi');
-    db.collection("searchresults").find({ $and: [{ $or: [{ "description": regex }, { "link": regex }, { "siteName": regex }] }, { "approved": true }] }, { fields: { _id: 0, link: 1, siteName: 1, description: 1 } }).limit(limit).toArray(function (err: any, result: any) {
+    db.collection("searchresults").find({ $and: [{ $or: [{ "description": regex }, { "link": regex }, { "siteName": regex }] },  {$or: [{ "approved": showUnapproved }, { "approved": true }]} ] }, { fields: { _id: 0, link: 1, siteName: 1, description: 1 } }).limit(limit).toArray(function (err: any, result: any) {
         if (err) throw err;
         res.send(result)
     });
