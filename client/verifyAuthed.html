@@ -4,6 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Verify links</title>
+    <style>
+      * {
+        font-family: sans-serif;
+      }
+      .approved {
+        background-color: greenyellow;
+      }
+      .unapproved {
+        background-color: rgb(255, 79, 79);
+      }
+      .name {
+        font-size: 50px;
+      }
+    </style>
     <script>
       async function getAll() {
         let allDataPromise = await fetch("/getAll");
@@ -17,6 +31,8 @@
         let i = 0;
 
         allData.forEach((element) => {
+          let largediv = document.createElement("div");
+          largediv.id = i;
           let button = document.createElement("input");
           button.type = "checkbox";
           button.id = element._id;
@@ -35,17 +51,24 @@
             );
             xhttp.send("id=" + element._id + "&approved=" + !element.approved);
           };
-          let div = document.createElement("div");
-          div.innerHTML = element.siteName;
-          div.id = i;
+          let div = document.createElement("a");
+          div.href = element.link;
+          div.innerHTML = element.siteName + "<br>";
+          document.getElementById("main").appendChild(largediv);
           if (element.approved) {
-            div.style.background = "lightgreen";
+            largediv.className = "approved";
             button.checked = true;
           } else {
-            div.style.background = "red";
+            largediv.className = "unapproved";
           }
-          document.getElementById("main").appendChild(div);
+          div.className = "name";
+          document.getElementById(i).appendChild(div);
+          largediv.innerHTML = largediv.innerHTML + element.description
           document.getElementById(i).appendChild(button);
+          document
+            .getElementById("main")
+            .appendChild(document.createElement("br"));
+
           i++;
         });
       }
