@@ -34,20 +34,6 @@
               "application/x-www-form-urlencoded"
             );
             xhttp.send("id=" + element._id + "&approved=" + !element.approved);
-
-              /*await fetch("/changeStatus", {
-              method: "post",
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-              },
-
-              //make sure to serialize your JSON body
-              body: JSON.stringify({
-                id: element._id,
-                approved: document.getElementById(element._id).checked,
-              }),
-            });*/
           };
           let div = document.createElement("div");
           div.innerHTML = element.siteName;

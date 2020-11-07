@@ -177,7 +177,7 @@ app.post("/changeStatus", async (req, res) => {
       console.log("Auth succsess");
       console.log(req.body.id);
 
-      if (req.body.approved == true) {
+      if (req.body.approved == "true") {
         await db
           .collection("searchresults")
           .update(
