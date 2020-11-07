@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify links</title>
+    <script>
+      async function getAll() {
+        let allDataPromise = await fetch("/getAll");
+
+        let allData = await allDataPromise.json();
+
+        document.getElementById("main").innerHTML = "";
+
+        console.log(allData);
+
+        let i = 0;
+
+        allData.forEach((element) => {
+          let button = document.createElement("input");
+          button.type = "checkbox";
+          button.id = element._id;
+          button.checked = false;
+          button.onclick = async function () {
+            await fetch("/changeStatus", {
+              method: "post",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+
+              //make sure to serialize your JSON body
+              body: JSON.stringify({
+                id: element._id,
+                approved: document.getElementById(element._id).checked,
+              }),
+            });
+
+            getAll();
+          };
+          let div = document.createElement("div");
+          div.innerHTML = element.siteName;
+          div.id = i;
+          if (element.approved) {
+            div.style.background = "lightgreen";
+            button.checked = true;
+          } else {
+            div.style.background = "red";
+          }
+          document.getElementById("main").appendChild(div);
+          document.getElementById(i).appendChild(button);
+          i++;
+        });
+      }
+
+      function click() {
+        window.alert("Test");
+      }
+    </script>
+  </head>
+  <body id="main" onload="getAll()"></body>
+</html>

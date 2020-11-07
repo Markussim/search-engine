@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        if(document.cookie) {
+            window.location = "/verifyAuthed"
+        }
+    </script>
+</head>
+<body>
+    <form method="POST" action="/verify">
+        <input type="password" name="auth" placeholder="Auth"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
