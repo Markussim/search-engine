@@ -17,6 +17,16 @@
       .name {
         font-size: 50px;
       }
+      .theButton {
+        float: right;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+
+        height: 10px;
+        width: 10%;
+        background-color: grey;
+      }
     </style>
     <script>
       async function getAll() {
@@ -34,6 +44,7 @@
           let largediv = document.createElement("div");
           largediv.id = i;
           let button = document.createElement("input");
+          button.className = "theButton";
           button.type = "checkbox";
           button.id = element._id;
           button.checked = false;
@@ -53,18 +64,22 @@
           };
           let div = document.createElement("a");
           div.href = element.link;
-          div.innerHTML = element.siteName + "<br>";
           document.getElementById("main").appendChild(largediv);
+          
           if (element.approved) {
             largediv.className = "approved";
             button.checked = true;
           } else {
             largediv.className = "unapproved";
           }
+          div.innerHTML = element.siteName + "<br>";
           div.className = "name";
           document.getElementById(i).appendChild(div);
-          largediv.innerHTML = largediv.innerHTML + element.description
+          largediv.innerHTML = largediv.innerHTML + element.description;
           document.getElementById(i).appendChild(button);
+          
+          
+          
           document
             .getElementById("main")
             .appendChild(document.createElement("br"));
