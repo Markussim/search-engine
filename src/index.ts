@@ -7,7 +7,7 @@ var ObjectID = require("mongodb").ObjectID;
 var cookieParser = require("cookie-parser");
 const app = express();
 const port = 3000;
-const clientdir = __dirname.substr(0, __dirname.length - 4) + "/client";
+const clientdir = __dirname.substr(0, __dirname.length - 4) + "client";
 
 mongoose.connect("mongodb://localhost/search", { useNewUrlParser: true });
 
