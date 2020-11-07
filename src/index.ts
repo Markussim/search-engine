@@ -3,6 +3,7 @@ import { verify } from "crypto";
 import express from "express";
 var url = require("url");
 const fs = require("fs");
+var ObjectID = require("mongodb").ObjectID;
 var cookieParser = require("cookie-parser");
 const app = express();
 const port = 3000;
@@ -164,7 +165,6 @@ app.get("/getAll", (req, res) => {
 });
 
 app.post("/changeStatus", async (req, res) => {
-  console.log(req.body);
   fs.readFile(clientdir + "/security/security.txt", "utf8", async function (
     err: any,
     data: any
@@ -175,14 +175,24 @@ app.post("/changeStatus", async (req, res) => {
 
     if (req.cookies.auth == data) {
       console.log("Auth succsess");
-      console.log(req.body.approved);
-      await db.collection("searchresults").updateOne(
-        { _id: req.body.id },
-        {
-          $set: { approved: req.body.approved, status: "P" },
-          $currentDate: { lastModified: true },
-        }
-      );
+      console.log(req.body.id);
+
+      if (req.body.approved == true) {
+        await db
+          .collection("searchresults")
+          .update(
+            { _id: ObjectID(req.body.id) },
+            { $set: { approved: true } }
+          );
+      } else {
+        await db
+        .collection("searchresults")
+        .update(
+          { _id: ObjectID(req.body.id) },
+          { $set: { approved: false } }
+        );
+      }
+
       res.send("Done");
     } else {
       res.send("No auth");
