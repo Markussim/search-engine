@@ -154,6 +154,7 @@ app.get("/getAll", (req, res) => {
               siteName: 1,
               description: 1,
               approved: 1,
+              views: 1
             },
           }
         )
