@@ -5,7 +5,7 @@ var url = require("url");
 const fs = require("fs");
 var ObjectID = require("mongodb").ObjectID;
 var cookieParser = require("cookie-parser");
-var cors = require('cors')
+var cors = require("cors");
 const app = express();
 const port = 3000;
 const clientdir = __dirname.substr(0, __dirname.length - 4) + "client";
@@ -36,7 +36,7 @@ app.use(
 
 app.use(cookieParser());
 
-app.use(cors())
+app.use(cors());
 
 const searchResult = mongoose.model("searchResult", searchResultShema);
 
@@ -145,19 +145,7 @@ app.get("/getAll", (req, res) => {
     if (req.cookies.auth == data) {
       console.log("Auth succsess");
       db.collection("searchresults")
-        .find(
-          {},
-          {
-            fields: {
-              _id: 1,
-              link: 1,
-              siteName: 1,
-              description: 1,
-              approved: 1,
-              views: 1
-            },
-          }
-        )
+        .find({})
         .toArray(function (err: any, result: any) {
           if (err) throw err;
           res.send(result);
