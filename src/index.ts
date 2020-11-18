@@ -5,6 +5,7 @@ var url = require("url");
 const fs = require("fs");
 var ObjectID = require("mongodb").ObjectID;
 var cookieParser = require("cookie-parser");
+var cors = require('cors')
 const app = express();
 const port = 3000;
 const clientdir = __dirname.substr(0, __dirname.length - 4) + "client";
@@ -34,6 +35,8 @@ app.use(
 );
 
 app.use(cookieParser());
+
+app.use(cors())
 
 const searchResult = mongoose.model("searchResult", searchResultShema);
 
