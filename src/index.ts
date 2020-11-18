@@ -218,6 +218,7 @@ app.get("/", (req, res) => {
   console.log(showUnapproved + " " + urlquery.showUnapproved);
 
   const regex = new RegExp(escapeRegex(query), "gi");
+  const mysort = { views: -1 };
   db.collection("searchresults")
     .find(
       {
@@ -230,6 +231,7 @@ app.get("/", (req, res) => {
       },
       { fields: { _id: 0, link: 1, siteName: 1, description: 1 } }
     )
+    .sort(mysort)
     .limit(limit)
     .toArray(function (err: any, result: any) {
       if (err) throw err;
@@ -237,13 +239,25 @@ app.get("/", (req, res) => {
     });
 });
 
-app.get("/view", async (req, res) => {
-  db.collection("searchresults").update(
-    { link: req.query.link },
+app.post("/view", async (req, res) => {
+  console.log(req.body.link)
+
+  db.collection("searchresults").updateOne(
+    { link: req.body.link },
     { $inc: { views: 1 } }
   );
-  res.send(200);
+
+  if(req.body.link) {
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(500);
+  }
+  
 });
+
+app.get("/view", (req, res) => {
+  res.sendFile(clientdir + "/view.html")
+})
 
 function escapeRegex(text: String) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
