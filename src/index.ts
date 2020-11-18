@@ -7,7 +7,7 @@ var ObjectID = require("mongodb").ObjectID;
 var cookieParser = require("cookie-parser");
 const app = express();
 const port = 3000;
-const clientdir = __dirname.substr(0, __dirname.length - 4) + "client";
+const clientdir = __dirname.substr(0, __dirname.length - 4) + "/client";
 
 mongoose.connect("mongodb://localhost/search", { useNewUrlParser: true });
 
@@ -180,17 +180,14 @@ app.post("/changeStatus", async (req, res) => {
       if (req.body.approved == "true") {
         await db
           .collection("searchresults")
-          .update(
-            { _id: ObjectID(req.body.id) },
-            { $set: { approved: true } }
-          );
+          .update({ _id: ObjectID(req.body.id) }, { $set: { approved: true } });
       } else {
         await db
-        .collection("searchresults")
-        .update(
-          { _id: ObjectID(req.body.id) },
-          { $set: { approved: false } }
-        );
+          .collection("searchresults")
+          .update(
+            { _id: ObjectID(req.body.id) },
+            { $set: { approved: false } }
+          );
       }
 
       res.send("Done");
@@ -238,6 +235,14 @@ app.get("/", (req, res) => {
       if (err) throw err;
       res.send(result);
     });
+});
+
+app.get("/view", async (req, res) => {
+  db.collection("searchresults").update(
+    { link: req.query.link },
+    { $inc: { views: 1 } }
+  );
+  res.send(200);
 });
 
 function escapeRegex(text: String) {
