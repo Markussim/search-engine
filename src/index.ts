@@ -133,7 +133,7 @@ app.get("/verifyAuthed", (req, res) => {
 });
 
 app.get("/getAll", (req, res) => {
-  fs.readFile(clientdir + "/security/security.txt", "utf8", function (
+  fs.readFile(clientdir + "/security/security.txt", "utf8", async function (
     err: any,
     data: any
   ) {
@@ -144,12 +144,9 @@ app.get("/getAll", (req, res) => {
 
     if (req.cookies.auth == data) {
       console.log("Auth succsess");
-      db.collection("searchresults")
-        .find({})
-        .toArray(function (err: any, result: any) {
-          if (err) throw err;
-          res.send(result);
-        });
+      let result = await searchResult.find({});
+
+      res.send(result);
     } else {
       res.send("No auth");
     }
