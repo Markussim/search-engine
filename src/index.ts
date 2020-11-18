@@ -7,7 +7,7 @@ var ObjectID = require("mongodb").ObjectID;
 var cookieParser = require("cookie-parser");
 const app = express();
 const port = 3000;
-const clientdir = __dirname.substr(0, __dirname.length - 4) + "/client";
+const clientdir = __dirname.substr(0, __dirname.length - 4) + "client";
 
 mongoose.connect("mongodb://localhost/search", { useNewUrlParser: true });
 
@@ -240,24 +240,24 @@ app.get("/", (req, res) => {
 });
 
 app.post("/view", async (req, res) => {
-  console.log(req.body.link)
+  console.log(req.query.link);
+  //await searchResult.update({link: req.query.link}, {$inc:{views:1}});
 
-  db.collection("searchresults").updateOne(
-    { link: req.body.link },
+  db.collection("searchresults").update(
+    { link: req.query.link },
     { $inc: { views: 1 } }
   );
 
-  if(req.body.link) {
+  if (req.query.link) {
     res.sendStatus(200);
   } else {
     res.sendStatus(500);
   }
-  
 });
 
 app.get("/view", (req, res) => {
-  res.sendFile(clientdir + "/view.html")
-})
+  res.sendFile(clientdir + "/view.html");
+});
 
 function escapeRegex(text: String) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");

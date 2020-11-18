@@ -7,22 +7,21 @@
     <script>
       async function handleLink(doc) {
         let formData = new FormData();
-        formData.append("link", doc.href.toString());
+        formData.append("link", doc.getAttribute("href"));
 
-        let json = await fetch("/view?link=" + doc.href, {
+        let json = await fetch("/view?link=" + doc.getAttribute("href"), {
           method: "POST",
           body: formData
         });
 
         if (json.ok) {
-          console.log(json.status);
-          //window.location = doc.href;
+          window.location = doc.getAttribute("href");
         }
       }
     </script>
   </head>
   <body>
-    <a href="https://cloudremover.com" onclick="handleLink(this); return false;"
+    <a href="https://marksism.space" onclick="handleLink(this); return false;"
       >Länk</a
     >
   </body>
